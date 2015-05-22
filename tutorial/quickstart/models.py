@@ -14,7 +14,7 @@ class Quickstart(models.Model):
   code = models.TextField()
   linenos = models.BooleanField(default=False)
   language = models.CharField(choices=LANGUAGE_CHOICES, default='python', max_length=100)
-  styles = models.CharField(STYLE_CHOICES, default='friendly', max_length=100)
+  style = models.CharField(STYLE_CHOICES, default='friendly', max_length=100)
 
 class Meta:
   ordering = ('created,')
