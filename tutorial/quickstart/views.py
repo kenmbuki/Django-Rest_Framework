@@ -4,6 +4,11 @@ from rest_framework import generics
 from rest_framework import permissions
 from django.contrib.auth.models import User
 from quickstart.serializers import UserSerializer
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.reverse import reverse
+from rest_framework import renderers
+from quickstart.permissions import IsOwnerOrReadOnly
 
 class QuickstartList(generics.ListCreateAPIView):
     queryset = Quickstart.objects.all()
@@ -17,7 +22,7 @@ class QuickstartList(generics.ListCreateAPIView):
 class QuickstartDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Quickstart.objects.all()
     serializer_class = QuickstartSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
 
 class UserList(generics.ListAPIView):
     queryset = User.objects.all()
@@ -27,7 +32,20 @@ class UserDetail(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+@api_view(('GET',))
+def api_root(request, format=None):
+    return Response({
+        'users': reverse('user-list', request=request, format=format),
+        'quickstart': reverse('quickstart-list', request=request, format=format)
+        })
 
+class QuickstartHighlight(generics.GenericAPIView):
+    queryset = Quickstart.objects.all()
+    renderer_classes = (renderers.StaticHTMLRenderer,)
+
+    def get(self, request, *args, **kwargs):
+        snippet = self.get_object()
+        return Response(quickstart.highlighted)
 
 
 """

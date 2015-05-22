@@ -5,17 +5,21 @@ from quickstart.models import Quickstart, LANGUAGE_CHOICES, STYLE_CHOICES
 
 
 class QuickstartSerializer(serializers.ModelSerializer):
+  owner = serializers.ReadOnlyField(source='owner.username')
+  highlight = serializers.HyperlinkedIdentityField(view_name='quickstart-highlight', format='html')
+
   class Meta:
     model = Quickstart
-    fields = ('id', 'title', 'code', 'linenos', 'style')
-    owner = serializers.ReadOnlyField(source='owner.username')
+    fields = ('url', 'highlight', 'owner', 'title', 'code', 'linenos', 'language', 'style')
 
 
 class UserSerializer(serializers.ModelSerializer):
   quickstart = serializers.PrimaryKeyRelatedField(many=True, queryset= Quickstart.objects.all())
+  quickstart = serializers.HyperlinkedRelatedField(many=True, view_name='quickstart-detail', read_only=True)
+
   class Meta:
     model = User
-    fields = ('id', 'username', 'quickstart')
+    fields = ('url', 'username', 'quickstart')
 
 
 
