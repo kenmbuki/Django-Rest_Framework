@@ -1,19 +1,31 @@
 from quickstart.models import Quickstart
 from quickstart.serializers import QuickstartSerializer
 from rest_framework import generics
-
+from rest_framework import permissions
+from django.contrib.auth.models import User
+from quickstart.serializers import UserSerializer
 
 class QuickstartList(generics.ListCreateAPIView):
     queryset = Quickstart.objects.all()
     serializer_class = QuickstartSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
 
 class QuickstartDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Quickstart.objects.all()
     serializer_class = QuickstartSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
+class UserList(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
-
-
+class UserDetail(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
 
 

@@ -1,7 +1,8 @@
 from django.db import models
+from rest_framework import permissions
 from pygments.lexers import get_all_lexers
 from pygments.styles import get_all_styles
-from pygments.lexers import get_all_lexers
+from pygments.lexers import get_lexer_by_name
 from pygments.formatters.html import HtmlFormatter
 from pygments import highlight
 
@@ -20,6 +21,7 @@ class Quickstart(models.Model):
   linenos = models.BooleanField(default=False)
   language = models.CharField(choices=LANGUAGE_CHOICES, default='python', max_length=100)
   style = models.CharField(STYLE_CHOICES, default='friendly', max_length=100)
+
 
   def save(self, *args, **kwargs):
       #using the pygments library to create a highlighted HTML representation of the code snippet

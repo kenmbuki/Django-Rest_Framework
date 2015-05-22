@@ -1,4 +1,5 @@
 from django.forms import widgets
+from django.contrib.auth.models import User
 from rest_framework import serializers
 from quickstart.models import Quickstart, LANGUAGE_CHOICES, STYLE_CHOICES
 
@@ -7,6 +8,16 @@ class QuickstartSerializer(serializers.ModelSerializer):
   class Meta:
     model = Quickstart
     fields = ('id', 'title', 'code', 'linenos', 'style')
+    owner = serializers.ReadOnlyField(source='owner.username')
+
+
+class UserSerializer(serializers.ModelSerializer):
+  quickstart = serializers.PrimaryKeyRelatedField(many=True, queryset= Quickstart.objects.all())
+  class Meta:
+    model = User
+    fields = ('id', 'username', 'quickstart')
+
+
 
 
 """
