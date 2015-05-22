@@ -1,9 +1,22 @@
-from rest_framework import status
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
 from quickstart.models import Quickstart
 from quickstart.serializers import QuickstartSerializer
+from rest_framework import generics
 
+
+class QuickstartList(generics.ListCreateAPIView):
+    queryset = Quickstart.objects.all()
+    serializer_class = QuickstartSerializer
+
+class QuickstartDetail(generics.RetrieveUpdate):
+    queryset = Quickstart.objects.all()
+    serializer_class = QuickstartSerializer
+
+
+
+
+
+
+"""
 @api_view(['GET', 'PUT', 'DELETE'])
 def quickstart_detail(request, pk, format=None):
     try:
@@ -42,8 +55,7 @@ def quickstart_list(request, format=None):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
+"""
 
 
 """
