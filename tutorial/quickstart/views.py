@@ -7,9 +7,11 @@ class QuickstartList(generics.ListCreateAPIView):
     queryset = Quickstart.objects.all()
     serializer_class = QuickstartSerializer
 
-class QuickstartDetail(generics.RetrieveUpdate):
+class QuickstartDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Quickstart.objects.all()
     serializer_class = QuickstartSerializer
+
+
 
 
 
