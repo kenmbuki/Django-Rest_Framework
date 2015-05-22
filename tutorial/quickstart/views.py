@@ -1,11 +1,52 @@
-from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.renderers import JSONRenderer
-from rest_framework.parsers import JSONParser
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from quickstart.models import Quickstart
 from quickstart.serializers import QuickstartSerializer
 
+@api_view(['GET', 'PUT', 'DELETE'])
+def quickstart_detail(request, pk, format=None):
+    try:
+        quickstart = Quickstart.objects.get(pk=pk)
+    except Quickstart.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
+    if request.method == 'GET':
+        serializer = QuickstartSerializer(quickstart)
+        return Response(serializer.data)
+
+    elif request.method == 'PUT':
+        serializer = QuickstartSerializer(quickstart, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
+        quickstart.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['GET', 'POST'])
+def quickstart_list(request, format=None):
+
+ #List all or create new
+    if request.method == 'GET':
+        quickstart = Quickstart.objects.all()
+        serializer = QuickstartSerializer(quickstart, many=True)
+        return Response(serializer.data)
+
+    elif request.method == 'POST':
+        serializer = QuickstartSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+"""
 class JSONResponse(HttpResponse):
     def __init__(self, data, **kwargs):
         content = JSONRenderer().render(data)
@@ -14,7 +55,7 @@ class JSONResponse(HttpResponse):
 
 @csrf_exempt
 def quickstart_list(request):
-    """List all code, or create a new  snippet"""
+    #List all code, or create a new  snippet
     if request.method == 'GET':
       quickstart = Quickstart.objects.all()
       serializers = QuickstartSerializer(quickstart, many=True)
@@ -50,4 +91,4 @@ def quickstart_detail(request, pk):
     elif request.method == 'DELETE':
         quickstart.delete()
         return HttpResponse(status=204)
-
+"""
